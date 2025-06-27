@@ -1,0 +1,21 @@
+# === build output ===
+*/build/
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/Makefile
+**/compile_commands.json
+**/Testing/
+
+# === object / binary ===
+*.o
+*.obj
+*.a
+*.so
+*.exe
+*.out
+*.log
+
+# === IDE / editor ===
+.vscode/
+.idea/
