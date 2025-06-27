@@ -26,7 +26,7 @@ Each subdirectory such as `seq_list` is a fully self-contained CMake project. Th
 - **Test Framework**: [Catch2](https://github.com/catchorg/Catch2), installed via [vcpkg](https://github.com/microsoft/vcpkg)
 
 Typical Workflow per Project： 
-~~~c++
+~~~bash
 # From within the project directory (e.g., seq_list/)
 cmake --preset=default         # configure using preset
 cmake --build --preset=default # build
