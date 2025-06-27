@@ -1,11 +1,14 @@
 #pragma once
+
 #include <cstddef>
 #include <cassert>
-#include <iostream>
+#include <utility>
 
 namespace ds{
 
-template<typename T>
+
+// SeqList: A standard sequential list
+template <typename T>
 class SeqList{
 public:
     // Constructor & Destructor
@@ -13,10 +16,10 @@ public:
     ~SeqList();
 
     // Copy and Move
-    SeqList(const SeqList<T>& other);
-    SeqList<T>& operator=(const SeqList<T>& other);
-    SeqList(SeqList<T>&& other) noexcept;
-    SeqList<T>& operator=(SeqList<T>&& other) noexcept;
+    SeqList(const SeqList& other);
+    SeqList& operator=(const SeqList& other);
+    SeqList(SeqList&& other) noexcept;
+    SeqList& operator=(SeqList&& other) noexcept;
 
     // Core operations
     void pushBack(const T& value);
@@ -118,7 +121,7 @@ SeqList<T>& SeqList<T>::operator=(SeqList<T>&& other) noexcept {
     return *this;
 }
 
-template<typename T>
+template <typename T>
 void SeqList<T>::ensureCapacity() {
     if (size_ >= capacity_) {
         // Double the capacity (or use initial capacity if capacity_ is 0)
@@ -139,14 +142,14 @@ void SeqList<T>::ensureCapacity() {
     }
 }
 
-template<typename T>
+template <typename T>
 void SeqList<T>::pushBack(const T& value) {
     ensureCapacity();   // Ensure enough capacity
     
     data_[size_++] = value; // Insert the value safely
 }
 
-template<typename T>
+template <typename T>
 void SeqList<T>::pushFront(const T& value) {
     ensureCapacity();
 
@@ -159,13 +162,13 @@ void SeqList<T>::pushFront(const T& value) {
     ++size_;
 }
 
-template<typename T>
+template <typename T>
 void SeqList<T>::popBack() {
     assert(size_ > 0 && "Cannot pop from an empty list.");
     --size_;
 }
 
-template<typename T>
+template <typename T>
 void SeqList<T>::popFront() {
     assert(size_ > 0 && "Cannot pop from an empty list.");
 
@@ -194,7 +197,7 @@ void SeqList<T>::pushFront(T&& value) {
     ++size_;
 }
 
-template<typename T>
+template <typename T>
 void SeqList<T>::insert(size_t pos, const T& value) {
     assert(pos <= size_); // Position must be within [0, size_]
     ensureCapacity();
@@ -208,7 +211,7 @@ void SeqList<T>::insert(size_t pos, const T& value) {
     ++size_;
 }
 
-template<typename T>
+template <typename T>
 void SeqList<T>::erase(size_t pos) {
     assert(pos < size_); // Position must be within [0, size_)
     
@@ -221,7 +224,7 @@ void SeqList<T>::erase(size_t pos) {
 }
 
 // Find the first index of the given value; return -1 if not found
-template<typename T>
+template <typename T>
 int SeqList<T>::find(const T& value) const {
     for (size_t i = 0; i < size_; ++i) {
         if (data_[i] == value) {
@@ -231,45 +234,32 @@ int SeqList<T>::find(const T& value) const {
     return -1;
 }
 
-template<typename T>
+template <typename T>
 void SeqList<T>::set(size_t pos, const T& value) {
     assert(pos < size_);
     data_[pos] = value;
 }
 
-template<typename T>
+template <typename T>
 size_t SeqList<T>::size() const {
     return size_;
 }
 
-template<typename T>
+template <typename T>
 bool SeqList<T>::empty() const {
     return size_ == 0;
 }
 
-template<typename T>
+template <typename T>
 T& SeqList<T>::operator[](size_t pos) {
     assert(pos < size_);
     return data_[pos];
 }
 
-template<typename T>
+template <typename T>
 const T& SeqList<T>::operator[](size_t pos) const {
     assert(pos < size_);
     return data_[pos];
-}
-
-template<typename T>
-void SeqList<T>::print() const {
-    // Print all elements in the sequence list
-    std::cout << "[";
-    for (size_t i = 0; i < size_; ++i) {
-        std::cout << data_[i];
-        if (i + 1 < size_) {
-            std::cout << ", ";
-        }
-    }
-    std::cout << "]\n";
 }
 
 }
