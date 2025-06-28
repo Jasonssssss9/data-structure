@@ -7,8 +7,7 @@ This repository provides modular and independent implementations of classic data
 The following data structures are or will be implemented in this repository:
 
 - Sequential List
-- Singly Linked List
-- Doubly Circular Linked List (with head node)
+- Doubly Circular Linked List (with sentinel head node)
 - Stack
 - Queue
 - Heap

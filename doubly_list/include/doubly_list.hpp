@@ -60,7 +60,6 @@ public:
     template <class U>
     bool insertAfter(const T& key, U&& value);
 
-
     bool erase(const T& value);
 
     size_type size() const;
@@ -194,7 +193,6 @@ bool DoublyList<T>::erase(const T& value) {
     return false;
 }
 
-
 template <typename T>
 typename DoublyList<T>::size_type DoublyList<T>::size() const {
     return size_;
@@ -204,7 +202,6 @@ template <typename T>
 bool DoublyList<T>::empty() const {
     return size_ == 0;
 }
-
 
 template <typename T>
 void DoublyList<T>::clear() {
