@@ -10,6 +10,9 @@ namespace ds
 // DoublyList: A circular doubly linked list with a sentinel head node
 template <typename T>
 class DoublyList{
+public:
+    using size_type = std::size_t;
+
 private:
     struct Node {
         T data;
@@ -28,7 +31,7 @@ private:
 
 
     Node* head_;  // Sentinel (dummy) head
-    size_t size_;
+    size_type size_;
 
 public:
     DoublyList();
@@ -60,7 +63,7 @@ public:
 
     bool erase(const T& value);
 
-    size_t size() const;
+    size_type size() const;
     bool empty() const;
 
     void clear();
@@ -163,7 +166,7 @@ bool DoublyList<T>::contains(const T& value) const {
 
 template <typename T>
 template <class U>
-[[nodiscard]] bool DoublyList<T>::insertBefore(const T& key, U&& value) {
+bool DoublyList<T>::insertBefore(const T& key, U&& value) {
     if (Node* pos = find(key)) {
         insertAfterNode(pos->prev, std::forward<U>(value));
         return true;
@@ -173,7 +176,7 @@ template <class U>
 
 template <typename T>
 template <class U>
-[[nodiscard]] bool DoublyList<T>::insertAfter(const T& key, U&& value) {
+bool DoublyList<T>::insertAfter(const T& key, U&& value) {
     if (Node* pos = find(key)) {
         insertAfterNode(pos, std::forward<U>(value));
         return true;
@@ -183,7 +186,7 @@ template <class U>
 
 
 template <typename T>
-[[nodiscard]] bool DoublyList<T>::erase(const T& value) {
+bool DoublyList<T>::erase(const T& value) {
     if (Node* pos = find(value)) {
         eraseNode(pos);
         return true;
@@ -193,7 +196,7 @@ template <typename T>
 
 
 template <typename T>
-size_t DoublyList<T>::size() const {
+typename DoublyList<T>::size_type DoublyList<T>::size() const {
     return size_;
 }
 
@@ -212,8 +215,9 @@ void DoublyList<T>::clear() {
 
 template <typename T>
 void DoublyList<T>::swap(DoublyList<T>& other) noexcept {
-    std::swap(head_, other.head_);
-    std::swap(size_, other.size_);
+    using std::swap;
+    swap(head_, other.head_);
+    swap(size_, other.size_);
 }
 
 template <typename T>
