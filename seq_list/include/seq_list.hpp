@@ -23,12 +23,6 @@ public:
     SeqList(SeqList&& other) noexcept;
     SeqList& operator=(SeqList&& other) noexcept;
 
-    // void pushBack(const T& value);
-    // void pushFront(const T& value);
-
-    // void pushBack(T&& value);
-    // void pushFront(T&& value);
-
     template<class U> 
     void pushBack (U&& value);
     
@@ -38,13 +32,10 @@ public:
     void popBack();
     void popFront();
 
-    // void insert(size_type pos, const T& value);
     template<class U>
     bool insert(size_type pos, U&& value);
 
     bool erase(size_type pos);
-
-    // int find(const T& value) const;
 
     size_type find(const T& value) const noexcept;
 
@@ -140,27 +131,6 @@ void SeqList<T>::ensureCapacity() {
     }
 }
 
-// template <typename T>
-// void SeqList<T>::pushBack(const T& value) {
-//     ensureCapacity();   // Ensure enough capacity
-    
-//     data_[size_++] = value; // Insert the value safely
-// }
-
-// template <typename T>
-// void SeqList<T>::pushFront(const T& value) {
-//     ensureCapacity();
-
-//     // Shift all elements to the right and make room at the front
-//     for (size_type i = size_; i > 0; --i) {
-//         data_[i] = std::move_if_noexcept(data_[i - 1]);
-//     }
-
-//     data_[0] = value;
-//     ++size_;
-// }
-
-
 template<typename T>
 template<class U>
 void SeqList<T>::pushBack(U&& value)
@@ -188,38 +158,6 @@ void SeqList<T>::popFront() {
     removeAt(0);
 }
 
-// template <typename T>
-// void SeqList<T>::pushBack(T&& value) {
-//     ensureCapacity();
-//     data_[size_++] = std::move(value);
-// }
-    
-// template <typename T>
-// void SeqList<T>::pushFront(T&& value) {
-//     ensureCapacity();
-    
-//     // Shift elements to the right and make room at the front
-//     for (size_type i = size_; i > 0; --i) {
-//         data_[i] = std::move_if_noexcept(data_[i - 1]);
-//     }
-//     data_[0] = std::move(value);
-//     ++size_;
-// }
-
-// template <typename T>
-// void SeqList<T>::insert(size_type pos, const T& value) {
-//     assert(pos <= size_); // Position must be within [0, size_]
-//     ensureCapacity();
-    
-//     // Shift elements to the right
-//     for (size_type i = size_; i > pos; --i) {
-//         data_[i] = std::move_if_noexcept(data_[i - 1]);
-//     }
-
-//     data_[pos] = value;
-//     ++size_;
-// }
-
 template<typename T>
 template<class U>
 bool SeqList<T>::insert(size_type pos, U&& value)
@@ -231,18 +169,6 @@ bool SeqList<T>::insert(size_type pos, U&& value)
     return true;
 }
 
-// template <typename T>
-// void SeqList<T>::erase(size_type pos) {
-//     assert(pos < size_); // Position must be within [0, size_)
-    
-//     // Shift elements to the left
-//     for (size_type i = pos; i < size_ - 1; ++i) {
-//         data_[i] = std::move_if_noexcept(data_[i + 1]);
-//     }
-
-//     --size_;
-// }
-
 template<typename T>
 bool SeqList<T>::erase(size_type pos)
 {
@@ -252,17 +178,6 @@ bool SeqList<T>::erase(size_type pos)
     removeAt(pos);
     return true;
 }
-
-// // Find the first index of the given value; return -1 if not found
-// template <typename T>
-// int SeqList<T>::find(const T& value) const {
-//     for (size_type i = 0; i < size_; ++i) {
-//         if (data_[i] == value) {
-//             return static_cast<int>(i);
-//         }
-//     } 
-//     return -1;
-// }
 
 
 template <typename T>
