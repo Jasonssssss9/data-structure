@@ -11,15 +11,21 @@ namespace ds
 template <typename T>
 class DoublyList{
 private:
-    // Node structure
     struct Node {
         T data;
         Node* prev;
         Node* next;
 
-        Node(const T& value) :data(value), prev(nullptr), next(nullptr) {}
-        Node(T&& value) :data(std::move(value)), prev(nullptr), next(nullptr) {}
+        // For sentinel head
+        Node() : data{}, prev(this), next(this) {}
+        
+        // Perfect forwarding
+        template <class U>
+        explicit Node(U&& v) 
+            : data(std::forward<U>(v)), prev(nullptr), next(nullptr) 
+        {}
     };
+
 
     Node* head_;  // Sentinel (dummy) head
     size_t size_;
@@ -29,24 +35,29 @@ public:
     ~DoublyList();
 
     DoublyList(const DoublyList& other);
-    DoublyList& operator=(const DoublyList& other);
+    DoublyList& operator=(DoublyList other) noexcept;
 
-    DoublyList(DoublyList&& other);
-    DoublyList& operator=(DoublyList&& other);
+    DoublyList(DoublyList&& other) noexcept;
+    DoublyList& operator=(DoublyList&& other) noexcept;
 
-    void pushFront(const T& value);
-    void pushBack(const T& value);
+    template <class U>
+    void pushFront(U&& value);
 
-    void pushFront(T&& value);
-    void pushBack(T&& value);
+    template <class U>
+    void pushBack(U&& value);
 
     void popFront();
     void popBack();
 
     bool contains(const T& value) const;
 
-    bool insertBefore(const T& key, const T& newVal);
-    bool insertAfter(const T& key, const T& newVal);
+    template <class U>
+    bool insertBefore(const T& key, U&& value);
+
+    template <class U>
+    bool insertAfter(const T& key, U&& value);
+
+
     bool erase(const T& value);
 
     size_t size() const;
@@ -55,27 +66,38 @@ public:
     void clear();
 
 private:
-    Node* const find(const T& value) const;
+    void swap(DoublyList& other) noexcept;
+
+    template <class U>
+    Node* insertAfterNode(Node* pos, U&& value);
+
+    void eraseNode(Node* pos) noexcept;
+
+    Node* find(const T& value) const noexcept;
 };
 
 template <typename T>
 DoublyList<T>::DoublyList() 
-    : head_(new Node(T{})), size_(0) {
-    head_->next = head_;
-    head_->prev = head_;
+    : head_(new Node()), size_(0) {
+    // head_->next = head_;
+    // head_->prev = head_;
 }
 
 template <typename T>
 DoublyList<T>::~DoublyList() {
-    clear();
-    delete head_;
+    assert(head_ && "use of moved-from DoublyList");
+
+    if (head_) {
+        clear();
+        delete head_;
+    }
 }
 
 template <typename T>
 DoublyList<T>::DoublyList(const DoublyList<T>& other)
-    : head_(new Node(T{})), size_(0) {
-    head_->next = head_;
-    head_->prev = head_;
+    : head_(new Node()), size_(0) {
+    // head_->next = head_;
+    // head_->prev = head_;
 
     Node* curr = other.head_->next;
     while (curr != other.head_) {
@@ -85,119 +107,53 @@ DoublyList<T>::DoublyList(const DoublyList<T>& other)
 }
 
 template <typename T>
-DoublyList<T>::DoublyList(DoublyList<T>&& other)
+DoublyList<T>& DoublyList<T>::operator=(DoublyList<T> other) noexcept {
+    swap(other);
+    return *this;
+}
+
+
+template <typename T>
+DoublyList<T>::DoublyList(DoublyList<T>&& other) noexcept
     : head_(other.head_), size_(other.size_) {
-    other.head_ = new Node(T{});
-    other.head_->next = other.head_;
-    other.head_->prev = other.head_;
+    other.head_ = nullptr;
     other.size_ = 0;
 }
 
-template <typename T>
-DoublyList<T>& DoublyList<T>::operator=(const DoublyList<T>& other) {
-    if (this != &other) {
-        clear();
 
-        Node* curr = other.head_->next;
-        while (curr != other.head_) {
-            pushBack(curr->data);
-            curr = curr->next;
-        }
-    }
+/*This move-assignment overload is effectively dead code: the by-value copy-and-swap
+operator= accepts both lvalues and rvalues, so any rvalue assignment is resolved
+to that version after a (no-throw) move construction of the parameter. */
+template <typename T>
+DoublyList<T>& DoublyList<T>::operator=(DoublyList<T>&& other) noexcept {
+    swap(other);
     return *this;
 }
 
 template <typename T>
-DoublyList<T>& DoublyList<T>::operator=(DoublyList<T>&& other) {
-    if (this != &other) {
-        clear();
-        delete head_;
-
-        head_ = other.head_;
-        size_ = other.size_;
-
-        other.head_ = new Node(T{});
-        other.head_->next = other.head_;
-        other.head_->prev = other.head_;
-        other.size_ = 0;
-    }
-    return *this;
+template <class U>
+void DoublyList<T>::pushFront(U&& value) {
+    insertAfterNode(head_, std::forward<U>(value));
 }
 
 template <typename T>
-void DoublyList<T>::pushFront(const T& value) {
-    Node* newNode = new Node(value);
-    Node* front = head_->next;
-    
-    head_->next = newNode;
-    newNode->prev = head_;
-    newNode->next = front;
-    front->prev = newNode;
-
-    ++size_;
-}
-
-template <typename T>
-void DoublyList<T>::pushBack(const T& value) {
-    Node* newNode = new Node(value);
-    Node* tail = head_->prev;
-
-    head_->prev = newNode;
-    newNode->next = head_;
-    newNode->prev = tail;
-    tail->next = newNode;
-
-    ++size_;
-}
-
-template <typename T>
-void DoublyList<T>::pushFront(T&& value) {
-    Node* newNode = new Node(std::move(value));
-    Node* front = head_->next;
-    
-    head_->next = newNode;
-    newNode->prev = head_;
-    newNode->next = front;
-    front->prev = newNode;
-
-    ++size_; 
-}
-
-template <typename T>
-void DoublyList<T>::pushBack(T&& value) {
-    Node* newNode = new Node(std::move(value));
-    Node* tail = head_->prev;
-
-    head_->prev = newNode;
-    newNode->next = head_;
-    newNode->prev = tail;
-    tail->next = newNode;
-
-    ++size_;
+template <class U>
+void DoublyList<T>::pushBack(U&& value) {
+    insertAfterNode(head_->prev, std::forward<U>(value));
 }
 
 template <typename T>
 void DoublyList<T>::popFront() {
     assert(!empty()); // Cannot pop from empty list
 
-    Node* front = head_->next;
-    head_->next = front->next;
-    front->next->prev = head_;
-
-    delete front;
-    --size_;
+    eraseNode(head_->next);
 }
 
 template <typename T>
 void DoublyList<T>::popBack() {
     assert(!empty());
 
-    Node* tail = head_->prev;
-    tail->prev->next = head_;
-    head_->prev = tail->prev;
-
-    delete tail;
-    --size_;
+    eraseNode(head_->prev);
 }
 
 template <typename T>
@@ -206,50 +162,33 @@ bool DoublyList<T>::contains(const T& value) const {
 }
 
 template <typename T>
-bool DoublyList<T>::insertBefore(const T& key, const T& newVal) {
-    Node* pos = find(key);
-    if (pos == nullptr) {
-        return false;
+template <class U>
+[[nodiscard]] bool DoublyList<T>::insertBefore(const T& key, U&& value) {
+    if (Node* pos = find(key)) {
+        insertAfterNode(pos->prev, std::forward<U>(value));
+        return true;
     }
-
-    Node* newNode = new Node(newVal);
-    newNode->prev = pos->prev;
-    pos->prev->next = newNode;
-    newNode->next = pos;
-    pos->prev = newNode;
-    ++size_;
-    return true;
+    return false;
 }
 
 template <typename T>
-bool DoublyList<T>::insertAfter(const T& key, const T& newVal) {
-    Node* pos = find(key);
-    if (pos == nullptr) {
-        return false;
+template <class U>
+[[nodiscard]] bool DoublyList<T>::insertAfter(const T& key, U&& value) {
+    if (Node* pos = find(key)) {
+        insertAfterNode(pos, std::forward<U>(value));
+        return true;
     }
-
-    Node* newNode = new Node(newVal);
-    newNode->next = pos->next;
-    pos->next->prev = newNode;
-    newNode->prev = pos;
-    pos->next = newNode;
-    ++size_;
-    return true;
+    return false;
 }
 
-template <typename T>
-bool DoublyList<T>::erase(const T& value) {
-    Node* pos = find(value);
-    if (pos == nullptr) {
-        return false;
-    }
 
-    pos->prev->next = pos->next;
-    pos->next->prev = pos->prev;
-    delete pos;
-    pos = nullptr;
-    --size_;
-    return true;
+template <typename T>
+[[nodiscard]] bool DoublyList<T>::erase(const T& value) {
+    if (Node* pos = find(value)) {
+        eraseNode(pos);
+        return true;
+    }
+    return false;
 }
 
 
@@ -272,7 +211,33 @@ void DoublyList<T>::clear() {
 }
 
 template <typename T>
-typename DoublyList<T>::Node* const DoublyList<T>::find(const T& value) const {
+void DoublyList<T>::swap(DoublyList<T>& other) noexcept {
+    std::swap(head_, other.head_);
+    std::swap(size_, other.size_);
+}
+
+template <typename T>
+template <class U>
+typename DoublyList<T>::Node* DoublyList<T>::insertAfterNode(typename DoublyList<T>::Node* pos, U&& value) {
+    Node* newNode = new Node(std::forward<U>(value));
+    newNode->next = pos->next;
+    newNode->prev = pos;
+    pos->next->prev = newNode;
+    pos->next = newNode;
+    ++size_;
+    return newNode;
+}
+
+template <typename T>
+void DoublyList<T>::eraseNode(Node* pos) noexcept {
+    pos->prev->next = pos->next;
+    pos->next->prev = pos->prev;
+    delete pos;
+    --size_;
+}
+
+template <typename T>
+typename DoublyList<T>::Node* DoublyList<T>::find(const T& value) const noexcept {
     Node* curr = head_->next;
     while (curr != head_) {
         if (curr->data == value) {

@@ -18,8 +18,8 @@ public:
     // Copy and Move
     SeqList(const SeqList& other);
     SeqList& operator=(const SeqList& other);
-    SeqList(SeqList&& other) noexcept;
-    SeqList& operator=(SeqList&& other) noexcept;
+    SeqList(SeqList&& other);
+    SeqList& operator=(SeqList&& other);
 
     // Core operations
     void pushBack(const T& value);
@@ -42,8 +42,6 @@ public:
 
     T& operator[](size_t pos);
     const T& operator[](size_t pos) const;
-
-    void print() const;  // Debug print
 
 private:
     void ensureCapacity();
@@ -97,7 +95,7 @@ SeqList<T>& SeqList<T>::operator=(const SeqList<T>& other) {
 
 // Move constructor
 template <typename T>
-SeqList<T>::SeqList(SeqList<T>&& other) noexcept
+SeqList<T>::SeqList(SeqList<T>&& other)
     :data_(other.data_), size_(other.size_), capacity_(other.capacity_) {
     other.data_ = nullptr;
     other.size_ = 0;
@@ -106,7 +104,7 @@ SeqList<T>::SeqList(SeqList<T>&& other) noexcept
 
 // Move assignment operator
 template <typename T>
-SeqList<T>& SeqList<T>::operator=(SeqList<T>&& other) noexcept {
+SeqList<T>& SeqList<T>::operator=(SeqList<T>&& other) {
     if (this != &other) {
         delete[] data_;
 
