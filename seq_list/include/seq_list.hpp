@@ -58,9 +58,10 @@ private:
     void removeAt(size_type pos) noexcept;
 
 private:
-    T* data_;            // pointer to dynamic array
     size_type size_;        // current number of elements
     size_type capacity_;    // current capacity
+    T* data_;               // pointer to dynamic array
+
     static constexpr size_type kInitialCapacity = 4;
 };
 
@@ -68,7 +69,7 @@ private:
 
 template <typename T>
 SeqList<T>::SeqList()
-    : data_(new T[kInitialCapacity]), size_(0), capacity_(kInitialCapacity) {}
+    : size_(0), capacity_(kInitialCapacity), data_(new T[kInitialCapacity]) {}
 
 template <typename T>
 SeqList<T>::~SeqList() {
