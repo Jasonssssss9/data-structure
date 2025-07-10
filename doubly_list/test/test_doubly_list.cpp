@@ -98,3 +98,39 @@ TEST_CASE("contains and move semantics", "[contains][move]") {
     REQUIRE(list.size() == 2);
     REQUIRE(list.contains("banana"));
 }
+
+// -----------------------------------------------------------------------------
+// Move constructor and move assignment
+// -----------------------------------------------------------------------------
+TEST_CASE("DoublyList supports move constructor", "[move][constructor]") {
+    DoublyList<std::string> list;
+    list.pushBack("a");
+    list.pushBack("b");
+
+    DoublyList<std::string> moved = std::move(list); // move constructor
+
+    REQUIRE(moved.size() == 2);
+    REQUIRE(moved.contains("a"));
+    REQUIRE(moved.contains("b"));
+
+    REQUIRE(list.size() == 0);      // moved-from list is empty
+    REQUIRE(list.empty());
+}
+
+TEST_CASE("DoublyList supports move assignment", "[move][assignment]") {
+    DoublyList<std::string> list1;
+    list1.pushBack("x");
+    list1.pushBack("y");
+
+    DoublyList<std::string> list2;
+    list2.pushBack("old");
+
+    list2 = std::move(list1);       // move assignment
+
+    REQUIRE(list2.size() == 2);
+    REQUIRE(list2.contains("x"));
+    REQUIRE(list2.contains("y"));
+
+    REQUIRE(list1.empty());
+    REQUIRE(list1.size() == 0);
+}

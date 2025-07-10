@@ -21,7 +21,8 @@ public:
     SeqList(const SeqList& other);
     SeqList& operator=(SeqList other) noexcept;
     SeqList(SeqList&& other) noexcept;
-    SeqList& operator=(SeqList&& other) noexcept;
+    
+    //SeqList& operator=(SeqList&& other) noexcept;
 
     template<class U> 
     void pushBack (U&& value);
@@ -104,12 +105,19 @@ SeqList<T>::SeqList(SeqList<T>&& other) noexcept
     other.capacity_ = 0;
 }
 
+
+/*
+This move-assignment operator causes ambiguity when combined with the
+copy-and-swap assignment operator. Since the by-value operator= can 
+handle both lvalues and rvalues (via move construction), it safely
+replaces the need for a separate move-assignment overload.
+*/
 // Move assignment operator
-template <typename T>
-SeqList<T>& SeqList<T>::operator=(SeqList<T>&& other) noexcept {
-    swap(other);
-    return *this;
-}
+// template <typename T>
+// SeqList<T>& SeqList<T>::operator=(SeqList<T>&& other) noexcept {
+//     swap(other);
+//     return *this;
+// }
 
 template <typename T>
 void SeqList<T>::ensureCapacity() {

@@ -41,7 +41,8 @@ public:
     DoublyList& operator=(DoublyList other) noexcept;
 
     DoublyList(DoublyList&& other) noexcept;
-    DoublyList& operator=(DoublyList&& other) noexcept;
+    
+    //DoublyList& operator=(DoublyList&& other) noexcept;
 
     template <class U>
     void pushFront(U&& value);
@@ -87,8 +88,6 @@ DoublyList<T>::DoublyList()
 
 template <typename T>
 DoublyList<T>::~DoublyList() {
-    assert(head_ && "use of moved-from DoublyList");
-
     if (head_) {
         clear();
         delete head_;
@@ -122,15 +121,11 @@ DoublyList<T>::DoublyList(DoublyList<T>&& other) noexcept
     other.size_ = 0;
 }
 
-
-/*This move-assignment overload is effectively dead code: the by-value copy-and-swap
-operator= accepts both lvalues and rvalues, so any rvalue assignment is resolved
-to that version after a (no-throw) move construction of the parameter. */
-template <typename T>
-DoublyList<T>& DoublyList<T>::operator=(DoublyList<T>&& other) noexcept {
-    swap(other);
-    return *this;
-}
+// template <typename T>
+// DoublyList<T>& DoublyList<T>::operator=(DoublyList<T>&& other) noexcept {
+//     swap(other);
+//     return *this;
+// }
 
 template <typename T>
 template <class U>

@@ -112,3 +112,40 @@ TEST_CASE("SeqList supports move semantics for push operations", "[move]") {
     REQUIRE(list[0] == "world");
     REQUIRE(list[1] == "hello");
 }
+
+
+// -----------------------------------------------------------------------------
+// Move constructor and move assignment
+// -----------------------------------------------------------------------------
+TEST_CASE("SeqList supports move constructor", "[move][constructor]") {
+    SeqList<std::string> list;
+    list.pushBack("a");
+    list.pushBack("b");
+
+    SeqList<std::string> moved = std::move(list);  // Move constructor
+
+    REQUIRE(moved.size() == 2);
+    REQUIRE(moved[0] == "a");
+    REQUIRE(moved[1] == "b");
+
+    REQUIRE(list.size() == 0);      // Moved-from list is empty
+    REQUIRE(list.empty());
+}
+
+TEST_CASE("SeqList supports move assignment", "[move][assignment]") {
+    SeqList<std::string> list1;
+    list1.pushBack("x");
+    list1.pushBack("y");
+
+    SeqList<std::string> list2;
+    list2.pushBack("old");
+
+    list2 = std::move(list1);       // Move assignment
+
+    REQUIRE(list2.size() == 2);
+    REQUIRE(list2[0] == "x");
+    REQUIRE(list2[1] == "y");
+
+    REQUIRE(list1.empty());         // Moved-from list is now empty
+    REQUIRE(list1.size() == 0);
+}
