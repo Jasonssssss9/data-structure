@@ -27,6 +27,9 @@ private:
         explicit Node(U&& v) 
             : data(std::forward<U>(v)), prev(nullptr), next(nullptr) 
         {}
+
+        Node(const Node&) = delete;
+        Node& operator=(const Node&) = delete;
     };
 
 
