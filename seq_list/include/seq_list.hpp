@@ -83,7 +83,7 @@ SeqList<T>::~SeqList() {
 // Copy constructor
 template <typename T>
 SeqList<T>::SeqList(const SeqList<T>& other)
-    : data_(new T[other.capacity_]), size_(other.size_), capacity_(other.capacity_) {
+    : size_(other.size_), capacity_(other.capacity_), data_(new T[other.capacity_]) {
     for (size_type i = 0; i < other.size_; ++i) {
         data_[i] = other.data_[i];
     }
@@ -99,7 +99,7 @@ SeqList<T>& SeqList<T>::operator=(SeqList<T> other) noexcept {
 // Move constructor
 template <typename T>
 SeqList<T>::SeqList(SeqList<T>&& other) noexcept 
-    :data_(other.data_), size_(other.size_), capacity_(other.capacity_) {
+    : size_(other.size_), capacity_(other.capacity_), data_(other.data_) {
     other.data_ = nullptr;
     other.size_ = 0;
     other.capacity_ = 0;
