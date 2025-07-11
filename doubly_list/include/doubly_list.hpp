@@ -33,8 +33,8 @@ private:
     };
 
 
-    Node* head_;  // Sentinel (dummy) head
     size_type size_;
+    Node* head_;  // Sentinel (dummy) head
 
 public:
     DoublyList();
@@ -84,7 +84,7 @@ private:
 
 template <typename T>
 DoublyList<T>::DoublyList() 
-    : head_(new Node()), size_(0) {
+    : size_(0), head_(new Node()) {
     // head_->next = head_;
     // head_->prev = head_;
 }
@@ -99,7 +99,7 @@ DoublyList<T>::~DoublyList() {
 
 template <typename T>
 DoublyList<T>::DoublyList(const DoublyList<T>& other)
-    : head_(new Node()), size_(0) {
+    : size_(0), head_(new Node()) {
     // head_->next = head_;
     // head_->prev = head_;
 
@@ -119,7 +119,7 @@ DoublyList<T>& DoublyList<T>::operator=(DoublyList<T> other) noexcept {
 
 template <typename T>
 DoublyList<T>::DoublyList(DoublyList<T>&& other) noexcept
-    : head_(other.head_), size_(other.size_) {
+    : size_(other.size_), head_(other.head_) {
     other.head_ = nullptr;
     other.size_ = 0;
 }
