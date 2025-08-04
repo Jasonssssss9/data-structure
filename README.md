@@ -11,7 +11,7 @@ The following data structures are or will be implemented in this repository:
 - Stack
 - Queue
 - Heap
-- Binary Search Tree (BST)
+- AVL Tree
 - Hash Table
 
 Each implementation focuses on clarity, correctness, and maintainability, using modern C++ features where appropriate.
