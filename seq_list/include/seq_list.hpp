@@ -59,9 +59,9 @@ private:
     void removeAt(size_type pos) noexcept;
 
 private:
-    size_type size_;        // current number of elements
-    size_type capacity_;    // current capacity
-    T* data_;               // pointer to dynamic array
+    size_type size_ = 0;        // current number of elements
+    size_type capacity_ = 0;    // current capacity
+    T* data_ = nullptr;         // pointer to dynamic array
 
     static constexpr size_type kInitialCapacity = 4;
 };

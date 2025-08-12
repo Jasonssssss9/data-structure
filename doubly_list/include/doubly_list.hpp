@@ -32,10 +32,6 @@ private:
         Node& operator=(const Node&) = delete;
     };
 
-
-    size_type size_;
-    Node* head_;  // Sentinel (dummy) head
-
 public:
     DoublyList();
     ~DoublyList();
@@ -80,6 +76,10 @@ private:
     void eraseNode(Node* pos) noexcept;
 
     Node* find(const T& value) const noexcept;
+
+private:
+    size_type size_ = 0;
+    Node* head_ = nullptr;  // Sentinel (dummy) head
 };
 
 template <typename T>

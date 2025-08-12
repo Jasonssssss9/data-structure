@@ -28,8 +28,8 @@ private:
         Node& operator=(const Node&) = delete;
     };
     
-    size_type size_;
-    Node* head_;
+    size_type size_ = 0;
+    Node* head_ = nullptr;
 
 public: 
     Queue();

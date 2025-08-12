@@ -37,9 +37,9 @@ private:
     void swap(Stack& other) noexcept;
 
 private:
-    size_type size_;
-    size_type capacity_;
-    T* data_;
+    size_type size_ = 0;
+    size_type capacity_ = 0;
+    T* data_ = nullptr;
     
     static constexpr size_type kInitialCapacity = 4;
 };

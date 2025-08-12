@@ -81,8 +81,8 @@ private:
 
 
 private:
-    size_type size_;
-    Node* root_;
+    size_type size_ = 0;
+    Node* root_ = nullptr;
 };
 
 template<typename K, typename V>
