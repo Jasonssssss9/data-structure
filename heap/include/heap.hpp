@@ -75,13 +75,13 @@ Heap<T, Compare>::Heap(Compare comp)
 template<typename T, typename Compare>
 Heap<T, Compare>::Heap(const T* ptr, size_type n, Compare comp)
     : size_(n), 
-      capacity_(n > kInitialCapacity ? k : kInitialCapacity), 
+      capacity_(n > kInitialCapacity ? n : kInitialCapacity), 
       data_(new T[capacity_]),
       comp_(std::move(comp)) {
     for (size_type i = 0; i < n; ++i) {
         data_[i] = ptr[i];
     }
-    build_heap(); // O(n) bottom-up heapify
+    buildHeap(); // O(n) bottom-up heapify
 }
 
 template <typename T, typename Compare>
@@ -92,7 +92,7 @@ Heap<T, Compare>::Heap(std::initializer_list<T> init, Compare comp)
       comp_(std::move(comp)) {
     size_type i = 0;
     for (const auto& x : init) data_[i++] = x;
-    build_heap(); // O(n)
+    buildHeap(); // O(n)
 }
 
 template <typename T, typename Compare>
@@ -121,7 +121,7 @@ Heap<T, Compare>::Heap(Heap&& other) noexcept
       data_(other.data_),
       comp_(std::move(other.comp_)) {
     other.size_ = 0;
-    other.capacity = 0;
+    other.capacity_ = 0;
     other.data_ = nullptr;
 }
 
@@ -130,6 +130,48 @@ Heap<T, Compare>& Heap<T, Compare>::operator=(Heap other) noexcept {
     swap(other);
     return *this;
 }
+
+template<typename T, typename Compare>
+const T& Heap<T, Compare>::top() const {
+    assert(size_ > 0 && "Heap is empty");
+    return data_[0];
+}
+
+template<typename T, typename Compare>
+template<class U>
+void Heap<T, Compare>::push(U&& value) {
+    ensureCapacity();
+    data_[size_] = std::forward<U>(value);
+    siftUp(size_);
+    ++size_;
+}
+
+template<typename T, typename Compare>
+void Heap<T, Compare>::pop() {
+    assert(size_ > 0 && "Heap is empty");
+    std::swap(data_[0], data_[size_ - 1]);
+    --size_;
+    if (size_ > 0) {
+        siftDown(0);
+    }
+}
+
+template<typename T, typename Compare>
+void Heap<T, Compare>::clear() noexcept {
+    size_ = 0;
+}
+
+template<typename T, typename Compare>
+bool Heap<T, Compare>::empty() const noexcept {
+    return size_ == 0;
+}
+
+template<typename T, typename Compare>
+typename Heap<T, Compare>::size_type
+Heap<T, Compare>::size() const noexcept {
+    return size_;
+}
+
 
 template <typename T, typename Compare>
 void Heap<T, Compare>::ensureCapacity() {
