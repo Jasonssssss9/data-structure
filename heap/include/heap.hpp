@@ -197,11 +197,11 @@ void Heap<T, Compare>::swap(Heap& other) noexcept{
 }
 
 template <typename T, typename Compare>
-void Heap<T, Compare>::siftDown(size_type i) {
+void Heap<T, Compare>::siftDown(size_type idx) {
     while (true) {
-        size_type left  = 2 * i + 1;
-        size_type right = 2 * i + 2;
-        size_type best  = i;
+        size_type left  = 2 * idx + 1;
+        size_type right = 2 * idx + 2;
+        size_type best  = idx;
 
         // Compare for max-heap by default (Less<T> means greater value has priority)
         if (left < size_ && comp_(data_[best], data_[left])) {
@@ -211,9 +211,9 @@ void Heap<T, Compare>::siftDown(size_type i) {
             best = right;
         }
 
-        if (best != i) {
-            std::swap(data_[i], data_[best]);
-            i = best;
+        if (best != idx) {
+            std::swap(data_[idx], data_[best]);
+            idx = best;
         } else {
             break;
         }
@@ -221,12 +221,12 @@ void Heap<T, Compare>::siftDown(size_type i) {
 }
 
 template<typename T, typename Compare>
-void Heap<T, Compare>::siftUp(size_type i) {
-    while (i > 0) {
-        size_type parent = (i - 1) / 2;
-        if (comp_(data_[parent], data_[i])) {
-            std::swap(data_[i], data_[parent]);
-            i = parent;
+void Heap<T, Compare>::siftUp(size_type idx) {
+    while (idx > 0) {
+        size_type parent = (idx - 1) / 2;
+        if (comp_(data_[parent], data_[idx])) {
+            std::swap(data_[idx], data_[parent]);
+            idx = parent;
         } else {
             break;
         }
